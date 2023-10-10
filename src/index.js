@@ -4,7 +4,7 @@ import router from './router.js'
 
 const URL_BD = "mongodb+srv://backendcourse:Mopolopo2002@cluster0.2ppyina.mongodb.net/?retryWrites=true&w=majority";
 
-const PORT = 3000;
+const PORT = 4321;
 
 const app = express()
 
