@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import router from './router.js'
-import PostController from "./Controllers/PostController.js";
+import getCorrectDate from "./utils/getCorrectDate/index.js";
 
 import axios from "axios";
 
@@ -50,7 +50,7 @@ async function startApp() {
                     const posts = await Post.find()
                     if ( posts.length ){
                         posts.forEach( (post) => {
-                            bot.sendMessage( chatID, `ID: ${post?._id}\nЗаголовок: ${post?.title}\nОписание: ${post?.description}\nДата: ${post?.create_at}` );
+                            bot.sendMessage( chatID, `ID: ${post?._id}\nЗаголовок: ${post?.title}\nОписание: ${post?.description}\nДата: ${ getCorrectDate(post?.create_at)}` );
                         } )
                     }else{
                         bot.sendMessage( chatID, `Постов нет` );
@@ -61,7 +61,7 @@ async function startApp() {
 
                     const resFact = await axios.get('https://catfact.ninja/fact');
                     const post = await Post.create( { title : 'Рандомный факт', description : resFact?.data?.fact, create_at : new Date() } );
-                    bot.sendMessage( chatID, `Пост создан:\nЗаголовок: ${post?.title}\nОписание: ${post?.description}\nДата: ${post.create_at}` );
+                    bot.sendMessage( chatID, `Пост создан:\nЗаголовок: ${post?.title}\nОписание: ${post?.description}\nДата: ${getCorrectDate(post.create_at)}` );
                 }
                 else if ( text.includes( '/delete_post' ) ){
                     const id = text.substr(13, text.length );
@@ -85,7 +85,7 @@ async function startApp() {
         console.log('Telegram bot is working')
 
     }catch(err){
-        console.log('Telegram bot is drop down');
+        console.log('Telegram bot crashed');
     }
 
     try{
@@ -99,7 +99,7 @@ async function startApp() {
         })
 
     }catch(err){
-        console.log('SERVER IS DROP DOWN');
+        console.log('Server crashed');
     }
 
 }
