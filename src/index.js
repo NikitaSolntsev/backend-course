@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express';
 import mongoose from 'mongoose';
 import router from './router.js'
@@ -8,9 +9,9 @@ import axios from "axios";
 import TelegramApi from 'node-telegram-bot-api'
 import Post from "./Models/Post.js";
 
-const telegram_bot_token = '6367946154:AAGfyApvzlZk5QaTs56LHW3cJIARGNpEo98';
+const telegram_bot_token = process.env.TELEGRAM_BOT_TOKEN;
 
-const URL_BD = "mongodb+srv://backendcourse:Mopolopo2002@cluster0.2ppyina.mongodb.net/?retryWrites=true&w=majority";
+const URL_BD = process.env.URL_BD;
 
 const bot = new TelegramApi(telegram_bot_token, { polling: true })
 
