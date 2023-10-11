@@ -53,7 +53,9 @@ async function startApp() {
                 }
                 else if ( text === '/posts' ){
                     const posts = await Post.find()
-                    console.log(posts);
+                    posts.forEach( (post) => {
+                        bot.sendMessage( chatID, `Заголовок: ${post?.title}\nОписание: ${post?.description}` );
+                    } )
                 }
                 else{
                     bot.sendMessage( chatID, `Привет! Ты написал мне ${text}` );
