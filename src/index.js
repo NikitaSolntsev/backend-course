@@ -27,8 +27,8 @@ async function startApp() {
 
         bot.setMyCommands( [
             {command : '/random_fact', description : 'Рандомный факт про котов'},
-            {command : '/my_name', description : 'Получить своё имя'},
-            {command : '/posts', description : 'Получить все посты'}
+            {command : '/posts', description : 'Получить все посты'},
+            {command : '/create_post', description : 'Создать пост с рандомным фактом про котов' }
         ] )
 
         bot.on( 'message', async (msg) => {
@@ -48,14 +48,18 @@ async function startApp() {
                         })
 
                 }
-                else if ( text === '/my_name' ){
-                    bot.sendMessage( chatID, `Твое имя: ${msg?.chat?.first_name}` );
-                }
                 else if ( text === '/posts' ){
                     const posts = await Post.find()
                     posts.forEach( (post) => {
                         bot.sendMessage( chatID, `Заголовок: ${post?.title}\nОписание: ${post?.description}` );
                     } )
+                }
+                else if ( text === '/create_post' ){
+                    bot.sendMessage( chatID, 'Случайный факт про кошек:' );
+
+                    const resFact = await axios.get('https://catfact.ninja/fact');
+                    const post = await Post.create( { 'Рандомный факт', resFact.data.fact } );
+                    bot.sendMessage( chatID, `Пост создан:\nЗаголовок: ${post?.title}\nОписание: ${post?.description}` );
                 }
                 else{
                     bot.sendMessage( chatID, `Привет! Ты написал мне ${text}` );
