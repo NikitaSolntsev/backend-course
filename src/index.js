@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import router from './router.js'
+import PostController from "./Controllers/PostController.js";
 
 import axios from "axios";
 
@@ -25,14 +26,14 @@ async function startApp() {
 
         bot.setMyCommands( [
             {command : '/random_fact', description : 'Рандомный факт про котов'},
-            {command : '/my_name', description : 'Получить своё имя'}
+            {command : '/my_name', description : 'Получить своё имя'},
+            {command : '/posts', description : 'Получить все посты'}
         ] )
 
-        bot.on( 'message', msg => {
+        bot.on( 'message', async (msg) => {
 
             try{
-
-                // console.log(msg)
+                console.log(msg)
 
                 const text = msg.text;
                 const chatID = msg.chat.id;
@@ -48,6 +49,10 @@ async function startApp() {
                 }
                 else if ( text === '/my_name' ){
                     bot.sendMessage( chatID, `Твое имя: ${msg?.chat?.first_name}` );
+                }
+                else if ( text === '/posts' ){
+                    const posts = await PostController.getAll();
+                    console.log(posts);
                 }
                 else{
                     bot.sendMessage( chatID, `Привет! Ты написал мне ${text}` );
@@ -77,7 +82,6 @@ async function startApp() {
 
     }catch(err){
         console.log('SERVER IS DROP DOWN');
-        // console.log(err);
     }
 
 }
