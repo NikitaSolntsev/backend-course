@@ -58,7 +58,7 @@ async function startApp() {
                     bot.sendMessage( chatID, 'Случайный факт про кошек:' );
 
                     const resFact = await axios.get('https://catfact.ninja/fact');
-                    const post = await Post.create( { 'Рандомный факт', resFact.data.fact } );
+                    const post = await Post.create( { title : 'Рандомный факт', description : resFact?.data?.fact } );
                     bot.sendMessage( chatID, `Пост создан:\nЗаголовок: ${post?.title}\nОписание: ${post?.description}` );
                 }
                 else{
