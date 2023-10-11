@@ -6,6 +6,7 @@ import PostController from "./Controllers/PostController.js";
 import axios from "axios";
 
 import TelegramApi from 'node-telegram-bot-api'
+import Post from "./Models/Post.js";
 
 const telegram_bot_token = '6367946154:AAGfyApvzlZk5QaTs56LHW3cJIARGNpEo98';
 
@@ -51,7 +52,7 @@ async function startApp() {
                     bot.sendMessage( chatID, `Твое имя: ${msg?.chat?.first_name}` );
                 }
                 else if ( text === '/posts' ){
-                    const posts = await PostController.getAll();
+                    const posts = await Post.find()
                     console.log(posts);
                 }
                 else{
