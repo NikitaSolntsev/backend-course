@@ -28,14 +28,12 @@ async function startApp() {
         bot.setMyCommands( [
             {command : '/random_fact', description : 'Рандомный факт про котов'},
             {command : '/posts', description : 'Получить все посты'},
-            {command : '/create_post', description : 'Создать пост с рандомным фактом про котов' }
+            {command : '/create_post', description : 'Создать пост с рандомным фактом про котов' },
         ] )
 
         bot.on( 'message', async (msg) => {
 
             try{
-                console.log(msg)
-
                 const text = msg.text;
                 const chatID = msg.chat.id;
 
@@ -50,16 +48,30 @@ async function startApp() {
                 }
                 else if ( text === '/posts' ){
                     const posts = await Post.find()
-                    posts.forEach( (post) => {
-                        bot.sendMessage( chatID, `Заголовок: ${post?.title}\nОписание: ${post?.description}` );
-                    } )
+                    if ( posts.length ){
+                        posts.forEach( (post) => {
+                            bot.sendMessage( chatID, `ID: ${post?._id}\nЗаголовок: ${post?.title}\nОписание: ${post?.description}\nДата: ${post?.create_at}` );
+                        } )
+                    }else{
+                        bot.sendMessage( chatID, `Постов нет` );
+                    }
                 }
                 else if ( text === '/create_post' ){
                     bot.sendMessage( chatID, 'Случайный факт про кошек:' );
 
                     const resFact = await axios.get('https://catfact.ninja/fact');
-                    const post = await Post.create( { title : 'Рандомный факт', description : resFact?.data?.fact } );
-                    bot.sendMessage( chatID, `Пост создан:\nЗаголовок: ${post?.title}\nОписание: ${post?.description}` );
+                    const post = await Post.create( { title : 'Рандомный факт', description : resFact?.data?.fact, create_at : new Date() } );
+                    bot.sendMessage( chatID, `Пост создан:\nЗаголовок: ${post?.title}\nОписание: ${post?.description}\nДата: ${post.create_at}` );
+                }
+                else if ( text.includes( '/delete_post' ) ){
+                    const id = text.substr(13, text.length );
+                    const deletedPost = await Post.findByIdAndDelete(id);
+                    if ( deletedPost ){
+                        bot.sendMessage( chatID, `Пост с id ${id} удалён.`);
+                    }else{
+                        bot.sendMessage( chatID, `Пост с id ${id} не найден.`);
+                    }
+
                 }
                 else{
                     bot.sendMessage( chatID, `Привет! Ты написал мне ${text}` );
@@ -74,7 +86,6 @@ async function startApp() {
 
     }catch(err){
         console.log('Telegram bot is drop down');
-        console.log(err);
     }
 
     try{
